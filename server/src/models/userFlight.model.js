@@ -2,6 +2,7 @@ const userFlightDatabase = require("./userFlight.mongo");
 const searchFlights = require("../puppeteer/bundle/firstTimeSearch");
 const testEmail = require("../../services/reference.email");
 const dayjs = require("dayjs");
+const { find } = require("./userFlight.mongo");
 
 // Get all documents
 const getAllDocuments = async () => {
@@ -14,16 +15,30 @@ const getAllReferences = async () => {
   return references;
 };
 
+const getAllEmails = async () => {
+  const documents = await userFlightDatabase.find({});
+  return (emails = documents.map((doc) => doc.user.email));
+};
+
 const checkIfFlightTimeForScan = async () => {
-  console.log(`checkIfFlightTimeForScan Fired`)
+  console.log(`checkIfFlightTimeForScan Fired`);
   // Next Scan adds 43200000ms to the last scan. If the current time is over this, then we want to scan
   // return await userFlightDatabase.find({$or : [ {isBeingScanned: false},{nextScan: 0}, {nextScan: {$lt: new Date().getTime() }}]});
-  return await userFlightDatabase.findOne({$or: [
-    { $and: [ { isBeingScanned: false }, {nextScan: 0} ] },
-    { $and: [ { isBeingScanned: false }, {nextScan: {$lt: new Date().getTime() }}] }
-]})}
+  return await userFlightDatabase.findOne({
+    $or: [
+      { $and: [{ isBeingScanned: false }, { nextScan: 0 }] },
+      {
+        $and: [
+          { isBeingScanned: false },
+          { nextScan: { $lt: new Date().getTime() } },
+        ],
+      },
+    ],
+  });
+};
 
 const createUser = async (userObject) => {
+  console.log(userObject);
   userObject.dates.departureDateString = dayjs(
     userObject.dates.departureDate
   ).format("dddd DD MMMM YYYY");
@@ -39,18 +54,18 @@ const updateUserByReference = async (reference) => {
   console.log(`Reference is ${reference}`);
   const flightUser = await getUserFlightByReference(reference);
   console.log("Flight User found");
-  flightUser.dates.departureDateString = dayjs(
-    flightUser.dates.departureDate
-  ).format("dddd DD MMMM YYYY");
-  flightUser.dates.returnDateString = dayjs(flightUser.dates.returnDate).format(
-    "dddd DD MMMM YYYY"
-  );
-  console.log(flightUser.dates.returnDateString);
-  await flightUser.save();
-  return flightUser.dates.departureDateString &&
-    flightUser.dates.returnDateString
-    ? true
-    : false;
+  // flightUser.dates.departureDateString = dayjs(
+  //   flightUser.dates.departureDate
+  // ).format("dddd DD MMMM YYYY");
+  // flightUser.dates.returnDateString = dayjs(flightUser.dates.returnDate).format(
+  //   "dddd DD MMMM YYYY"
+  // );
+  // console.log(flightUser.dates.returnDateString);
+  // await flightUser.save();
+  // return flightUser.dates.departureDateString &&
+  //   flightUser.dates.returnDateString
+  //   ? true
+  //   : false;
 };
 
 const userTest = () => {
@@ -69,7 +84,7 @@ const changeFlightScanStatusByReference = async (reference, status) => {
 };
 
 const searchFlightByPID = async (workerPID) => {
-  console.log(`searchFlightByPID fired`)
+  console.log(`searchFlightByPID fired`);
   return await userFlightDatabase.findOne({ workerPID: workerPID });
 };
 
@@ -80,9 +95,9 @@ const changePIDByReference = async (reference, workerPID) => {
 };
 
 const changeFlightScanStatusByPID = async (workerPID, status) => {
-  console.log(`changeFlightScanStatusByPID fired`)
+  console.log(`changeFlightScanStatusByPID fired`);
   const UserFlight = await searchFlightByPID(workerPID);
-  console.log(UserFlight)
+  console.log(UserFlight);
   UserFlight.isBeingScanned = status;
   await UserFlight.save();
   console.log(`Flight status changed to ${status}`);
@@ -196,9 +211,9 @@ const checkMaximumHoliday = async (reference) => {
   console.log(
     `cheapestFlightsOrderMax Length = ${cheapestFlightsOrderMax.length}`
   );
-  consoleOutput(cheapestFlightsOrderMax, bestFlightsOrderMax)
+  consoleOutput(cheapestFlightsOrderMax, bestFlightsOrderMax);
   // Send email
-  testEmail(cheapestFlightsOrderMax, bestFlightsOrderMax, userFlight)
+  testEmail(cheapestFlightsOrderMax, bestFlightsOrderMax, userFlight);
   return { cheapestFlightsOrderMax, bestFlightsOrderMax };
 };
 
@@ -222,6 +237,7 @@ module.exports = {
   createUser,
   updateUserByReference,
   userTest,
+  getAllEmails,
   checkIfFlightTimeForScan,
   getUserFlightByReference,
   changeFlightScanStatusByReference,
