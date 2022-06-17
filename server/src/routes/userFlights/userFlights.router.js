@@ -4,7 +4,7 @@ const {httpGetLatestFlightsByReference, httpGetAllDocuments, httpFireEvents, htt
 const flightsRouter = express.Router()
 
 flightsRouter.get("/", httpGetAllDocuments)
-flightsRouter.post("/reference", httpGetLatestFlightsByReference)
+flightsRouter.post("/reference-latest-flight", httpGetLatestFlightsByReference)
 flightsRouter.post("/fire-reference", httpFireEvents)
 flightsRouter.get("/get-references", httpGetAllReferences)
 flightsRouter.get("/get-all-emails", httpGetAllEmails)
