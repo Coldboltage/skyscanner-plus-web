@@ -31,7 +31,8 @@ const httpGetInfoandLatestFlightsByReference = async (req, res) => {
   if (result === null) {
     return res.status(409).json({error: "Reference doesn't exist on database"})
   } else {
-    return res.status(200).json(result)
+    const latestFlights = await checkMaximumHoliday(req.body.reference)
+    return res.status(200).json({latestFlights, result})
   }
 }
 
