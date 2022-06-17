@@ -77,6 +77,15 @@ const getUserFlightByReference = async (reference) => {
   return await userFlightDatabase.findOne({ ref: reference });
 };
 
+const getInfoandLatestFlightsByReference = async (reference) => {
+  const result = await getUserFlightByReference(reference)
+  if (result === null) {
+    return null
+  } else {
+    return result
+  }
+}
+
 const changeFlightScanStatusByReference = async (reference, status) => {
   const UserFlight = await getUserFlightByReference(reference);
   UserFlight.isBeingScanned = status;
@@ -254,4 +263,5 @@ module.exports = {
   checkUserFlightStuff,
   checkMaximumHoliday,
   fireEvents,
+  getInfoandLatestFlightsByReference,
 };

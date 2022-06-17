@@ -1,4 +1,4 @@
-const {checkMaximumHoliday, getAllDocuments, getAllReferences, fireEvents, getAllEmails} = require("../../models/userFlight.model")
+const {checkMaximumHoliday, getAllDocuments, getAllReferences, fireEvents, getAllEmails, getInfoandLatestFlightsByReference} = require("../../models/userFlight.model")
 
 const httpGetLatestFlightsByReference = async (req, res) => {
   console.log(req.body)
@@ -23,7 +23,17 @@ const httpFireEvents = (req, res) => {
 
 const httpGetAllEmails = async (req, res) => {
   return res.status(200).json(await getAllEmails())
-} 
+}
+
+const httpGetInfoandLatestFlightsByReference = async (req, res) => {
+  console.log(`httpGetInfoandLatestFlightsByReference fired. reference = ${req.body.reference}`)
+  const result = await getInfoandLatestFlightsByReference(req.body.reference)
+  if (result === null) {
+    return res.status(409).json({error: "Reference doesn't exist on database"})
+  } else {
+    return res.status(200).json(result)
+  }
+}
 
 module.exports = {
   httpGetLatestFlightsByReference,
@@ -31,4 +41,5 @@ module.exports = {
   httpFireEvents,
   httpGetAllReferences,
   httpGetAllEmails,
+  httpGetInfoandLatestFlightsByReference,
 }
