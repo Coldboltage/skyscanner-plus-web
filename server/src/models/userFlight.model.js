@@ -189,8 +189,8 @@ const checkUserFlightStuff = async (reference) => {
   return { cheapestFlightsOrder, bestFlightsOrder, userFlight };
 };
 
-const checkEmailAdress = async (email) => {
-  return await UserFlight.findOne({email: email} ? {message: "email exists"} : {message: "failed"})
+const checkEmailAddress = async (email) => {
+  return await UserFlight.findOne({email: email} ? true : false)
 }
 
 // I'm expecting the flights to have been processed in cheapestFlightScannedToday.
@@ -251,7 +251,7 @@ module.exports = {
   updateUserByReference,
   userTest,
   getAllEmails,
-  checkEmailAdress,
+  checkEmailAddress,
   checkIfFlightTimeForScan,
   getUserFlightByReference,
   changeFlightScanStatusByReference,

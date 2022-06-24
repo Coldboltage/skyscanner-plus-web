@@ -5,7 +5,7 @@ const {
   fireEvents,
   getAllEmails,
   getInfoandLatestFlightsByReference,
-  checkEmailAdress,
+  checkEmailAddress,
 } = require("../../models/userFlight.model");
 
 const httpGetLatestFlightsByReference = async (req, res) => {
@@ -51,6 +51,13 @@ const httpGetInfoandLatestFlightsByReference = async (req, res) => {
 
 const httpCheckEmailAddress = async (req, res) => {
   console.log(`httpCheckEmailAdress fired. email = ${req.body.email}`)
+  const outcome = await checkEmailAddress(req.body.email)
+  if (outcome ){
+    return res.status(200).json({message: "Email Address exists"})
+  } else {
+    return res.status(409).json({message: "No flights found with that email address"})
+  }
+  
 }
 
 module.exports = {
