@@ -189,6 +189,10 @@ const checkUserFlightStuff = async (reference) => {
   return { cheapestFlightsOrder, bestFlightsOrder, userFlight };
 };
 
+const checkEmailAdress = async (email) => {
+  return await UserFlight.findOne({email: email} ? {message: "email exists"} : {message: "failed"})
+}
+
 // I'm expecting the flights to have been processed in cheapestFlightScannedToday.
 const maximumHoliday = async (flightArray, daysOfMaxHoliday) => {
   console.log(`Starting maximumHoliday`);
@@ -247,6 +251,7 @@ module.exports = {
   updateUserByReference,
   userTest,
   getAllEmails,
+  checkEmailAdress,
   checkIfFlightTimeForScan,
   getUserFlightByReference,
   changeFlightScanStatusByReference,
