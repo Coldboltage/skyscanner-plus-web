@@ -190,7 +190,13 @@ const checkUserFlightStuff = async (reference) => {
 };
 
 const checkEmailAddress = async (email) => {
-  return await UserFlight.findOne({email: email} ? true : false)
+  return await userFlightDatabase.findOne({"user.email": email})
+}
+
+const getReferencesByEmailAddress = async (email) => {
+  const result = await userFlightDatabase.find({"user.email": email})
+  console.log("Returning getReferencesByEmailAddress results")
+  return result.map(document => document.ref)
 }
 
 // I'm expecting the flights to have been processed in cheapestFlightScannedToday.
@@ -252,6 +258,7 @@ module.exports = {
   userTest,
   getAllEmails,
   checkEmailAddress,
+  getReferencesByEmailAddress,
   checkIfFlightTimeForScan,
   getUserFlightByReference,
   changeFlightScanStatusByReference,
