@@ -44,6 +44,10 @@ const httpGetInfoandLatestFlightsByReference = async (req, res) => {
     return res
       .status(409)
       .json({ error: "Reference doesn't exist on database" });
+  }  else if (result.__v === 0) {
+    return res
+      .status(409)
+      .json({ error: "No scan has been done yet" });
   } else {
     const latestFlights = await checkMaximumHoliday(req.body.reference);
     return res.status(200).json({ latestFlights, result });
