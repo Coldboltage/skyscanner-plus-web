@@ -47,7 +47,7 @@ const httpGetInfoandLatestFlightsByReference = async (req, res) => {
   }  else if (result.__v === 0) {
     return res
       .status(409)
-      .json({ error: "No scan has been done yet" });
+      .json({ error: "No scan has been done yet", result });
   } else {
     const latestFlights = await checkMaximumHoliday(req.body.reference);
     return res.status(200).json({ latestFlights, result });
