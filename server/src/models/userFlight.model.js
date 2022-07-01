@@ -133,6 +133,7 @@ const cheapestFlightScannedToday = async (newUser) => {
   const Flight = await userFlightDatabase.findOne({ ref: newUser.ref });
   // console.log(Flight)
   const FlightArrays = await Flight.scanDate.at(-1).departureDate;
+  console.log(FlightArrays)
   let cheapestObject = [];
   let bestObject = [];
   for (let departureDateArray of FlightArrays) {

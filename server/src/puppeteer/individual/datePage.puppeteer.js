@@ -140,13 +140,16 @@ const datePage = async (page, browser, newUser, puppeteer, pageURL, verifyNames)
     departureDateIteration.dateString = new Date(
       departureDate.fullDate + addDepartDay * 86400000
     ).toDateString();
-
     departureDateIteration.year = new Date(
       departureDate.fullDate + addDepartDay * 86400000
     ).getFullYear();
     departureDateIteration.time = new Date(
       departureDate.fullDate + addDepartDay * 86400000
     ).getTime();
+    departureDateIteration.day = new Date(
+      departureDate.fullDate + addDepartDay * 86400000
+    ).getDay();
+
     departureDateIteration.returnDates = [];
     console.log(`How many times has this been fired ${addDepartDay}`);
 
@@ -190,6 +193,8 @@ const datePage = async (page, browser, newUser, puppeteer, pageURL, verifyNames)
       const returnDateWithDate = new Date(returnDateInMili).getDate();
       const returnDateWithMonth = new Date(returnDateInMili).getMonth();
       const returnDateWithYear = new Date(returnDateInMili).getFullYear();
+      const returnDateWithDay = new Date(returnDateInMili).getDay();
+
 
       // Setting up requiredDates here
       const requiredDayStart = new Date(userFlight.dates.requiredDayStart).getTime()
@@ -224,6 +229,17 @@ const datePage = async (page, browser, newUser, puppeteer, pageURL, verifyNames)
       } else {
         console.log("we got a wee false here")
         continue
+      }
+
+      // Check if weekend has been added or not
+      if (userFlight.dates.weekendOnly) {
+        // if (departingDay = Friday and returnDay = Sunday) {
+        if (departureDateIteration.day === 5 && returnDateWithDay === 0) {
+          console.log("Weekend special, all good to go!")
+        } else {
+          console.log("This is a weekend special but either departing day or return day incorrect")
+          continue
+        }
       }
 
 
