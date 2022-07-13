@@ -10,6 +10,14 @@ const flightSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
+    fingerPrintId: {
+      type: String,
+      required: true,
+    }
+  },
+  created: {
+    type: Date,
+    required: true
   },
   ref: {
     type: String,

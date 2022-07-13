@@ -199,6 +199,11 @@ const getReferencesByEmailAddress = async (email) => {
   return result.map(document => document.ref)
 }
 
+const checkFlightsTodayByFingerPrintId = async (fingerPrintId) => {
+  const result = await userFlightDatabase.find({$and: [{"user.fingerPrintId": fingerPrintId},{"created": { $gte: new Date().toISOString().split('T')[0]}}]} )
+  return result.length
+}
+
 // I'm expecting the flights to have been processed in cheapestFlightScannedToday.
 const maximumHoliday = async (flightArray, daysOfMaxHoliday) => {
   console.log(`Starting maximumHoliday`);
@@ -258,6 +263,7 @@ module.exports = {
   userTest,
   getAllEmails,
   checkEmailAddress,
+  checkFlightsTodayByFingerPrintId,
   getReferencesByEmailAddress,
   checkIfFlightTimeForScan,
   getUserFlightByReference,

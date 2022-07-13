@@ -1,4 +1,4 @@
-const {createUser, userTest, updateUserByReference, checkEmailAddress} = require("../../models/userFlight.model");
+const {createUser, userTest, updateUserByReference, checkEmailAddress, checkFlightsTodayByFingerPrintId} = require("../../models/userFlight.model");
 
 const httpCreateUser = async (req, res) => {
   const response = await createUser(req.body)
@@ -32,9 +32,16 @@ const httpCheckEmailAddress = async (req, res) => {
   }
 }
 
+const httpCheckFlightsTodayByFingerPrintId = async (req, res) => {
+  console.log(req.body.fingerPrintId)
+  const response = await checkFlightsTodayByFingerPrintId(req.body.fingerPrintId)
+  res.status(200).json(response)
+}
+
 module.exports = {
   httpCreateUser,
   httpUserTest,
   httpUpdateUserByReference,
-  httpCheckEmailAddress
+  httpCheckEmailAddress,
+  httpCheckFlightsTodayByFingerPrintId
 }
