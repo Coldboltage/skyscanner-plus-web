@@ -1,7 +1,6 @@
-const {createUser, userTest, updateUserByReference} = require("../../models/userFlight.model");
+const {createUser, userTest, updateUserByReference, checkEmailAddress} = require("../../models/userFlight.model");
 
 const httpCreateUser = async (req, res) => {
-  
   const response = await createUser(req.body)
   if (response === true) {
     res.status(200).json({success: true})
@@ -23,8 +22,19 @@ const httpUpdateUserByReference = async (req, res) => {
   }
 }
 
+const httpCheckEmailAddress = async (req, res) => {
+  console.log(req.body.email)
+  const response = await checkEmailAddress(req.body.email)
+  if (response) {
+    res.status(200).json(true)
+  } else {
+    res.status(403).json({message: "true"})
+  }
+}
+
 module.exports = {
   httpCreateUser,
   httpUserTest,
-  httpUpdateUserByReference
+  httpUpdateUserByReference,
+  httpCheckEmailAddress
 }
