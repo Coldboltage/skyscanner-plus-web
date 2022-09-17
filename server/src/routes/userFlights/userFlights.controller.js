@@ -7,6 +7,7 @@ const {
   getInfoandLatestFlightsByReference,
   checkEmailAddress,
   getReferencesByEmailAddress,
+  resetFlightStatus,
 } = require("../../models/userFlight.model");
 
 const httpGetLatestFlightsByReference = async (req, res) => {
@@ -69,6 +70,11 @@ const httpCheckEmailAddress = async (req, res) => {
   
 }
 
+const httpResetFlightStatus = async (req, res) => {
+  const response = await resetFlightStatus()
+  return res.status(200).json({message: "sent"})
+}
+
 module.exports = {
   httpGetLatestFlightsByReference,
   httpGetAllDocuments,
@@ -77,5 +83,5 @@ module.exports = {
   httpGetAllEmails,
   httpGetInfoandLatestFlightsByReference,
   httpCheckEmailAddress,
-
+  httpResetFlightStatus,
 };

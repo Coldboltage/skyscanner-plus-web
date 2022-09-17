@@ -10,15 +10,8 @@ const flightSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    fingerPrintId: {
-      type: String,
-      required: true,
-    }
   },
-  created: {
-    type: Date,
-    required: true
-  },
+  
   ref: {
     type: String,
     required: true,
@@ -31,6 +24,9 @@ const flightSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  lastUpdated: {
+    type: Number,
+  },
   scannedLast: {
     type: Number,
     required: true,
@@ -38,6 +34,16 @@ const flightSchema = new mongoose.Schema({
   nextScan: {
     type: Number,
     required: true,
+  },
+  screenshot:{
+    type: String
+  },
+  status: {
+    type: String,
+  },
+  currency: {
+    fullCurrency: String,
+    currencyCode: String
   },
   flights: {
     departure: {
@@ -132,6 +138,10 @@ const flightSchema = new mongoose.Schema({
                   type: Number,
                   required: true,
                 },
+                costWithCurrency: {
+                  type: String,
+                  required: true,
+                },
                 time: {
                   type: String,
                 },
@@ -145,6 +155,10 @@ const flightSchema = new mongoose.Schema({
               best: {
                 cost: {
                   type: Number,
+                  required: true,
+                },
+                costWithCurrency: {
+                  type: String,
                   required: true,
                 },
                 time: {
@@ -163,7 +177,6 @@ const flightSchema = new mongoose.Schema({
       ],
     },
   ],
-
 });
 
 module.exports = mongoose.model("userflight", flightSchema);

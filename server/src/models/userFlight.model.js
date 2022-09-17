@@ -247,6 +247,11 @@ const fireEvents = async (reference) => {
   await checkMaximumHoliday(userFlight.ref);
 };
 
+const resetFlightStatus = async () => {
+  await userFlightDatabase.updateMany({}, {isBeingScanned: false, workerPID: 0, nextScan: 0, scannedLast: 0})
+  return {message: "reset successful"}
+}
+
 const consoleOutput = async (cheapestFlightsOrder, bestFlightsOrder) => {
   console.log("#################");
   console.log(">> Max Holiday Output: Cheapest <<");
@@ -282,4 +287,5 @@ module.exports = {
   checkMaximumHoliday,
   fireEvents,
   getInfoandLatestFlightsByReference,
+  resetFlightStatus,
 };

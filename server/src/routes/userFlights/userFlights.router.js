@@ -6,7 +6,8 @@ const {
   httpGetAllReferences,
   httpGetAllEmails,
   httpGetInfoandLatestFlightsByReference,
-  httpCheckEmailAddress
+  httpCheckEmailAddress,
+  httpResetFlightStatus
 } = require("./userFlights.controller");
 
 const flightsRouter = express.Router();
@@ -21,5 +22,7 @@ flightsRouter.post("/fire-reference", httpFireEvents);
 flightsRouter.get("/get-references", httpGetAllReferences);
 flightsRouter.get("/get-all-emails", httpGetAllEmails);
 flightsRouter.post("/get-references-by-email", httpCheckEmailAddress);
+flightsRouter.get("/status-reset", httpResetFlightStatus)
+
 
 module.exports = flightsRouter;
