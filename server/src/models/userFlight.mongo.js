@@ -55,7 +55,7 @@ const flightSchema = new mongoose.Schema({
       required: true,
     },
     returnFlight: {
-      type: boolean,
+      type: Boolean,
       required: true,
     },
     passengers: {
