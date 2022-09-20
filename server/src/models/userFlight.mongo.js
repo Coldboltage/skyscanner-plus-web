@@ -8,8 +8,13 @@ const flightSchema = new mongoose.Schema({
     },
     email: {
       type: String,
-      required: true,
     },
+    fingerPrintId: { 
+      type: String,
+    },
+    sub: {
+      type: String
+    }
   },
   
   ref: {
