@@ -252,6 +252,13 @@ const resetFlightStatus = async () => {
   return {message: "reset successful"}
 }
 
+const getFlightsBySub = async (sub) => {
+  console.log(`This is sub ${sub}`)
+  const test = await userFlightDatabase.find({"user.sub": sub})
+  console.log(test)
+  return test
+}
+
 const consoleOutput = async (cheapestFlightsOrder, bestFlightsOrder) => {
   console.log("#################");
   console.log(">> Max Holiday Output: Cheapest <<");
@@ -288,4 +295,5 @@ module.exports = {
   fireEvents,
   getInfoandLatestFlightsByReference,
   resetFlightStatus,
+  getFlightsBySub,
 };
