@@ -16,7 +16,7 @@ const getAllReferences = async () => {
 };
 
 const getAllEmails = async () => {
-  const documents = await userFlightDatabase.find({});
+  const documents = await userFlightDatabase.find({}).lean();
   return (emails = documents.map((doc) => doc.user.email));
 };
 
@@ -74,7 +74,7 @@ const userTest = () => {
 
 const getUserFlightByReference = async (reference) => {
   console.log(`Fired getUserFlightByReference`);
-  return await userFlightDatabase.findOne({ ref: reference });
+  return await userFlightDatabase.findOne({ ref: reference }).lean();
 };
 
 const getInfoandLatestFlightsByReference = async (reference) => {
@@ -190,17 +190,17 @@ const checkUserFlightStuff = async (reference) => {
 };
 
 const checkEmailAddress = async (email) => {
-  return await userFlightDatabase.findOne({"user.email": email})
+  return await userFlightDatabase.findOne({"user.email": email}).lean()
 }
 
 const getReferencesByEmailAddress = async (email) => {
-  const result = await userFlightDatabase.find({"user.email": email})
+  const result = await userFlightDatabase.find({"user.email": email}).lean()
   console.log("Returning getReferencesByEmailAddress results")
   return result.map(document => document.ref)
 }
 
 const checkFlightsTodayByFingerPrintId = async (fingerPrintId) => {
-  const result = await userFlightDatabase.find({$and: [{"user.fingerPrintId": fingerPrintId},{"created": { $gte: new Date().toISOString().split('T')[0]}}]} )
+  const result = await userFlightDatabase.find({$and: [{"user.fingerPrintId": fingerPrintId},{"created": { $gte: new Date().toISOString().split('T')[0]}}]} ).lean()
   return result.length
 }
 
@@ -254,7 +254,7 @@ const resetFlightStatus = async () => {
 
 const getFlightsBySub = async (sub) => {
   console.log(`This is sub ${sub}`)
-  const test = await userFlightDatabase.find({"user.sub": sub})
+  const test = await userFlightDatabase.find({"user.sub": sub}).lean()
   console.log(test)
   return test
 }
