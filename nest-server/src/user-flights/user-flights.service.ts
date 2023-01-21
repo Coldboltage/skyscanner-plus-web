@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import { Model } from 'mongoose';
 import { Repository } from 'typeorm';
-import { CreateUserFlightDto } from './dto/create-user-flight.dto';
 import { UpdateUserFlightDto } from './dto/update-user-flight.dto';
 import {
   User,
