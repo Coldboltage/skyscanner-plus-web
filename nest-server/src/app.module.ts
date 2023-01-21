@@ -9,12 +9,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    UserModule,
-    MongooseModule.forRoot(
-      'mongodb+srv://coldbolt-flightscanner:vtwmT7B4HkObSyYc@scannerplus.zgsmw.mongodb.net/scannerplus?retryWrites=true&w=majority',
-    ),
-    UserFlightsModule,
     ConfigModule.forRoot(),
+    UserModule,
+    UserFlightsModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -25,6 +22,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    MongooseModule.forRoot(process.env.MONGODB_CONNECTION),
   ],
   controllers: [AppController],
   providers: [AppService],
