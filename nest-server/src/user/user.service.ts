@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common/exceptions';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
+    console.log(createUserDto);
+    if (
+      !createUserDto.hasOwnProperty('email') &&
+      !createUserDto.hasOwnProperty('sub')
+    )
+      throw new BadRequestException('sub_or_email_needed');
+
     return 'This action adds a new user';
   }
 
