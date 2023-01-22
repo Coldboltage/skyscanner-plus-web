@@ -8,7 +8,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserFlightsService } from './user-flights.service';
-import { CreateUserFlightDto } from './dto/create-user-flight.dto';
 import { UpdateUserFlightDto } from './dto/update-user-flight.dto';
 import { UserFlight } from './schema/userFlight.schema';
 
@@ -68,6 +67,30 @@ export class UserFlightsController {
   createTest() {
     return this.userFlightsService.createTest();
   }
+
+  // TypeORM
+
+  @Get(':fingerprint/fingerprint-today')
+  checkIfFingerprintUsedToday(@Param('fingerprint') fingerprint: string) {
+    return this.userFlightsService.checkIfFingerprintUsedToday(fingerprint);
+  }
+
+  @Get(':sub/suborm')
+  findFlightsBySub(@Param('sub') sub: string) {
+    return this.userFlightsService.findFlightsBySub(sub);
+  }
+
+  @Get(':ref/getByRef')
+  findFlightsByRef(@Param('ref') ref: string) {
+    return this.userFlightsService.findFlightByRef(ref);
+  }
+
+  @Get(':userId/getByUser')
+  findFlightsByUser(@Param('userId') userId: string) {
+    return this.userFlightsService.findFlightsByUser(userId);
+  }
+
+  // Testing
 
   @Get('test')
   getTests() {

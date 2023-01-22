@@ -63,6 +63,8 @@ export class User {
 export class UserFlightTypeORM {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
+  @Column()
+  created: Date;
   @OneToOne(() => User)
   @JoinColumn()
   user: User;

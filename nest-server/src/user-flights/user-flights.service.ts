@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import { Model } from 'mongoose';
-import { Repository } from 'typeorm';
+import { UserService } from 'src/user/user.service';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { UpdateUserFlightDto } from './dto/update-user-flight.dto';
 import {
   User,
@@ -34,6 +35,7 @@ export class UserFlightsService {
     private DepartureDateRepository: Repository<DepartureDate>,
     @InjectRepository(ReturnDatesORM)
     private ReturnDateRepository: Repository<ReturnDatesORM>,
+    private userService: UserService,
   ) {}
 
   // async create(createUserFlightDto: CreateUserFlightDto) {
@@ -166,6 +168,8 @@ export class UserFlightsService {
     return result.length;
   }
 
+  // TypeORM
+
   async createTest() {
     const user: User = {
       fingerPrintId: randomUUID(),
@@ -176,6 +180,7 @@ export class UserFlightsService {
     const createFlight: UserFlightTypeORM = {
       id: randomUUID(),
       ref: randomUUID(),
+      created: new Date(),
       isBeingScanned: false,
       workerPID: 0,
       lastUpdated: 0,
@@ -249,5 +254,35 @@ export class UserFlightsService {
   async getTests() {
     const test = await this.UserFlightTypeORMRepository.find({});
     console.log(test[0].scanDate[0].departureDate[0].returnDates[0]);
+  }
+
+  async checkIfFingerprintUsedToday(fingerprint: string) {
+    const testDate = new Date();
+    testDate.setHours(0, 0, 0, 0);
+    return (
+      await this.UserFlightTypeORMRepository.findBy({
+        user: {
+          fingerPrintId: fingerprint,
+        },
+        created: MoreThanOrEqual(testDate),
+      })
+    ).length;
+  }
+
+  async findFlightsBySub(sub: string) {
+    return await this.UserFlightTypeORMRepository.findBy({
+      user: {
+        sub,
+      },
+    });
+  }
+
+  async findFlightByRef(ref: string) {
+    return await this.UserFlightTypeORMRepository.findBy({ ref });
+  }
+
+  async findFlightsByUser(userId: string) {
+    const user = await this.userService.findOne(userId);
+    return await this.UserFlightTypeORMRepository.findBy({ user });
   }
 }

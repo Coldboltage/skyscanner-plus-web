@@ -11,6 +11,7 @@ import {
   UserFlightTypeORM,
   User,
 } from './entities/user-flight.entity';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import {
       ReturnDatesORM,
       User,
     ]),
+    UserModule,
   ],
   controllers: [UserFlightsController],
   providers: [UserFlightsService],
