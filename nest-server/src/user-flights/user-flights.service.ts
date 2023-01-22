@@ -93,6 +93,7 @@ export class UserFlightsService {
   // }
 
   async create(payload: UserFlight) {
+    // This is not becoming a date properly which is why this is happening.
     payload.dates.departureDate = new Date(payload.dates.departureDate);
     payload.dates.returnDate = new Date(payload.dates.returnDate);
     const test = await this.userFlightModel.create(payload);
