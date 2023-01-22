@@ -85,6 +85,11 @@ export class UserFlightsController {
     return this.userFlightsService.findFlightByRef(ref);
   }
 
+  @Get(':userId/getByUser')
+  findFlightsByUser(@Param('userId') userId: string) {
+    return this.userFlightsService.findFlightsByUser(userId);
+  }
+
   // Testing
 
   @Get('test')

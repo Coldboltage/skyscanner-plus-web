@@ -8,5 +8,6 @@ import { User } from 'src/user-flights/entities/user-flight.entity';
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}

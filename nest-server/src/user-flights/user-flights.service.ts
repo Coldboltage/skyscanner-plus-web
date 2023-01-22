@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import { Model } from 'mongoose';
+import { UserService } from 'src/user/user.service';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { UpdateUserFlightDto } from './dto/update-user-flight.dto';
 import {
@@ -34,6 +35,7 @@ export class UserFlightsService {
     private DepartureDateRepository: Repository<DepartureDate>,
     @InjectRepository(ReturnDatesORM)
     private ReturnDateRepository: Repository<ReturnDatesORM>,
+    private userService: UserService,
   ) {}
 
   // async create(createUserFlightDto: CreateUserFlightDto) {
@@ -277,5 +279,10 @@ export class UserFlightsService {
 
   async findFlightByRef(ref: string) {
     return await this.UserFlightTypeORMRepository.findBy({ ref });
+  }
+
+  async findFlightsByUser(userId: string) {
+    const user = await this.userService.findOne(userId);
+    return await this.UserFlightTypeORMRepository.findBy({ user });
   }
 }
