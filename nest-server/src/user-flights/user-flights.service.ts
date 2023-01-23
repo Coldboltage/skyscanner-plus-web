@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import { Model } from 'mongoose';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { UserEmailDto } from 'src/user/dto/user-email.dto';
+import { User, UserSaveMethod } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { UpdateUserFlightDto } from './dto/update-user-flight.dto';
 import {
-  User,
   UserFlightTypeORM,
   ScanDateORM,
   DepartureDate,
@@ -37,6 +39,7 @@ export class UserFlightsService {
     private ReturnDateRepository: Repository<ReturnDatesORM>,
     private userService: UserService,
   ) {}
+  private readonly logger = new Logger(UserFlight.name);
 
   // async create(createUserFlightDto: CreateUserFlightDto) {
   //   const {
@@ -171,6 +174,28 @@ export class UserFlightsService {
 
   // TypeORM
 
+  async createFlight(userInformation: UserSaveMethod, payload) {
+    // Find User
+    let user = await this.userService.checkForUser(userInformation);
+    if (!user) {
+      const createUserDto: CreateUserDto = {
+        fingerPrintId: userInformation.fingerprint,
+        email: userInformation.email,
+        sub: userInformation.user.sub,
+      };
+      user = await this.userService.create(createUserDto);
+    }
+    // create flight as UserFlightTypeORM spec.
+    const flight: UserFlightTypeORM = {
+      ...payload,
+      user,
+      created: new Date(),
+    };
+    // Save Flight with user connected
+    this.logger.verbose('Finished creating flight');
+    return await this.UserFlightTypeORMRepository.save(flight);
+  }
+
   async createTest() {
     const user: User = {
       fingerPrintId: randomUUID(),
@@ -188,7 +213,7 @@ export class UserFlightsService {
       user: userTest,
       scannedLast: 1674168122118,
       nextScan: 1674254522118,
-      status: false,
+      status: 'created',
       currency: {
         fullCurrency: 'EUR - €',
         currencyCode: 'EUR',
@@ -270,7 +295,7 @@ export class UserFlightsService {
     ).length;
   }
 
-  async findFlightsBySub(sub: string) {
+  async findFlightsBySub(sub: string): Promise<UserFlightTypeORM[]> {
     return await this.UserFlightTypeORMRepository.findBy({
       user: {
         sub,
@@ -279,11 +304,20 @@ export class UserFlightsService {
   }
 
   async findFlightByRef(ref: string) {
-    return await this.UserFlightTypeORMRepository.findBy({ ref });
+    return await this.UserFlightTypeORMRepository.findOneBy({ ref });
   }
 
   async findFlightsByUser(userId: string) {
     const user = await this.userService.findOne(userId);
+    return await this.UserFlightTypeORMRepository.findBy({ user });
+  }
+
+  async findFlightsByEmail(email: string) {
+    const emailDto: UserEmailDto = {
+      email,
+    };
+    const user = await this.userService.findByEmail(emailDto);
+    console.log(user);
     return await this.UserFlightTypeORMRepository.findBy({ user });
   }
 }

@@ -1,3 +1,4 @@
+import { User } from 'src/user/entities/user.entity';
 import {
   Entity,
   Column,
@@ -48,25 +49,12 @@ export class Best {
 }
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id?: string;
-  @Column({ nullable: true })
-  email?: string;
-  @Column({ nullable: true })
-  fingerPrintId: string;
-  @Column({ nullable: true })
-  sub: string;
-}
-
-@Entity()
 export class UserFlightTypeORM {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
   @Column()
   created: Date;
-  @OneToOne(() => User)
-  @JoinColumn()
+  @ManyToOne(() => User)
   user: User;
   @Column()
   ref: string;
@@ -74,16 +62,16 @@ export class UserFlightTypeORM {
   isBeingScanned: boolean;
   @Column()
   workerPID: number;
-  @Column('bigint')
+  @Column({ type: 'bigint', default: 0 })
   lastUpdated: number;
-  @Column('bigint')
+  @Column({ type: 'bigint', default: 0 })
   scannedLast: number;
-  @Column('bigint')
+  @Column({ type: 'bigint', default: 0 })
   nextScan: number;
   @Column({ nullable: true })
   screenshot?: string;
   @Column()
-  status: boolean;
+  status: string;
   @Column('simple-json')
   currency: {
     fullCurrency: string;

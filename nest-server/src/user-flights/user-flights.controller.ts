@@ -10,6 +10,7 @@ import {
 import { UserFlightsService } from './user-flights.service';
 import { UpdateUserFlightDto } from './dto/update-user-flight.dto';
 import { UserFlight } from './schema/userFlight.schema';
+import { UserSaveMethod } from 'src/user/entities/user.entity';
 
 @Controller('user-flights')
 export class UserFlightsController {
@@ -69,6 +70,13 @@ export class UserFlightsController {
   }
 
   // TypeORM
+  @Post('typeorm')
+  createFlight(
+    @Body('userInformation') userInformation: UserSaveMethod,
+    @Body('payload') payload,
+  ) {
+    return this.userFlightsService.createFlight(userInformation, payload);
+  }
 
   @Get(':fingerprint/fingerprint-today')
   checkIfFingerprintUsedToday(@Param('fingerprint') fingerprint: string) {
@@ -88,6 +96,11 @@ export class UserFlightsController {
   @Get(':userId/getByUser')
   findFlightsByUser(@Param('userId') userId: string) {
     return this.userFlightsService.findFlightsByUser(userId);
+  }
+
+  @Get(':email/getByEmail')
+  findFlightsByEmail(@Param('email') email: string) {
+    return this.userFlightsService.findFlightsByEmail(email);
   }
 
   // Testing

@@ -9,9 +9,9 @@ import {
   ReturnDatesORM,
   ScanDateORM,
   UserFlightTypeORM,
-  User,
 } from './entities/user-flight.entity';
 import { UserModule } from 'src/user/user.module';
+import { User } from 'src/user/entities/user.entity';
 
 @Module({
   imports: [
