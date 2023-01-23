@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user-flights/entities/user-flight.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEmailDto } from './dto/user-email.dto';
+import { User, UserSaveMethod } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -13,15 +13,17 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
+  private readonly logger = new Logger('User');
   async create(createUserDto: CreateUserDto) {
+    this.logger.verbose('Creating User');
     if (
       !createUserDto.hasOwnProperty('email') &&
       !createUserDto.hasOwnProperty('sub')
     )
       throw new BadRequestException('sub_or_email_needed');
-    await this.checkIfFingerprintPresent(createUserDto.fingerPrintId);
-    await this.userRepository.save(createUserDto);
-    return 'This action adds a new user';
+    // await this.checkIfFingerprintPresent(createUserDto.fingerPrintId);
+    console.log(createUserDto);
+    return await this.userRepository.save(createUserDto);
   }
 
   findAll() {
@@ -52,8 +54,37 @@ export class UserService {
   }
 
   async findByEmail(email: UserEmailDto) {
-    const test = await this.userRepository.findOneBy({ email: email.email });
-    console.log(test);
-    return test;
+    return await this.userRepository.findOneBy({ email: email.email });
+  }
+
+  async findByAuth0Email(email: UserEmailDto) {
+    return await this.userRepository.findOneBy({
+      auth0_email: email.email,
+    });
+  }
+
+  async findBySubId(sub: string) {
+    return await this.userRepository.findOneBy({ sub });
+  }
+
+  async checkForUser(userInformation: UserSaveMethod): Promise<User> {
+    console.log(userInformation);
+    // const user = await this.findByFingerprint(userInformation.fingerprint);
+    // if (user) return user;
+    if (userInformation.email) {
+      const email: UserEmailDto = {
+        email: userInformation.email,
+      };
+      return await this.findByEmail(email);
+    }
+    if (userInformation.user.sub)
+      return this.findBySubId(userInformation.user.sub);
+    if (userInformation.user.auth0_email) {
+      const email: UserEmailDto = {
+        email: userInformation.user.auth0_email,
+      };
+      return await this.findByAuth0Email(email);
+    }
+    console.log('No user found. Creating user');
   }
 }
