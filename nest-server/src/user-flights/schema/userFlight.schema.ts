@@ -86,7 +86,7 @@ export class UserFlight {
   @Prop()
   screenshot?: string;
   @Prop()
-  status: boolean;
+  status: string;
   @Prop()
   currency: Currency;
   @Prop()
