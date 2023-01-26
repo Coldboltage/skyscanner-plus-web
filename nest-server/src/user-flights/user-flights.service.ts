@@ -14,6 +14,7 @@ import {
   ScanDateORM,
   DepartureDate,
   ReturnDatesORM,
+  Dates,
 } from './entities/user-flight.entity';
 import {
   ReturnDates,
@@ -37,6 +38,8 @@ export class UserFlightsService {
     private DepartureDateRepository: Repository<DepartureDate>,
     @InjectRepository(ReturnDatesORM)
     private ReturnDateRepository: Repository<ReturnDatesORM>,
+    @InjectRepository(Dates)
+    private DatesRepository: Repository<Dates>,
     private userService: UserService,
   ) {}
   private readonly logger = new Logger(UserFlight.name);
@@ -154,7 +157,7 @@ export class UserFlightsService {
 
   async getMostRecentScannedFlights(id: string) {
     const reference = await this.findOne(id);
-    delete reference.scanDate;
+    // delete reference.scanDate;
     const mostRecentScan = reference.scanDate.at(-1);
     const sortedFlights = this.sortCheapestFlights(mostRecentScan);
     return { latestFlights: sortedFlights, result: reference };
@@ -203,6 +206,15 @@ export class UserFlightsService {
     };
     const userTest = this.UserRepository.create(user);
     await this.UserRepository.save(userTest);
+    // Dates
+    const dates: Dates = {
+      departureDate: new Date('2023-02-12T00:00:00.000+00:00'),
+      returnDate: new Date('2023-02-17T00:00:00.000+00:00'),
+      minimalHoliday: 3,
+      maximumHoliday: 5,
+    };
+    const datesTest = await this.DatesRepository.save(dates);
+    // User
     const createFlight: UserFlightTypeORM = {
       id: randomUUID(),
       ref: randomUUID(),
@@ -212,7 +224,8 @@ export class UserFlightsService {
       lastUpdated: 0,
       user: userTest,
       scannedLast: 1674168122118,
-      nextScan: 1674254522118,
+      nextScan: new Date(1674518400000),
+      nextScanDate: new Date(1674518400000),
       status: 'created',
       currency: {
         fullCurrency: 'EUR - €',
@@ -223,12 +236,7 @@ export class UserFlightsService {
         arrival: 'Paris',
         returnFlight: true,
       },
-      dates: {
-        departureDate: new Date('2023-01-12T00:00:00.000+00:00'),
-        returnDate: new Date('2023-01-17T00:00:00.000+00:00'),
-        minimalHoliday: 3,
-        maximumHoliday: 5,
-      },
+      dates: datesTest,
     };
     const userFlightSaved = await this.UserFlightTypeORMRepository.save(
       createFlight,
@@ -273,7 +281,8 @@ export class UserFlightsService {
       },
     };
 
-    await this.ReturnDateRepository.save(returnDateTest);
+    const test = await this.ReturnDateRepository.save(returnDateTest);
+    console.log(test);
     return 'This action adds a new userFlight';
   }
 

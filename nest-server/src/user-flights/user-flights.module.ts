@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserFlightSchema, UserFlight } from './schema/userFlight.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
+  Dates,
   DepartureDate,
   ReturnDatesORM,
   ScanDateORM,
@@ -24,6 +25,7 @@ import { User } from 'src/user/entities/user.entity';
       DepartureDate,
       ReturnDatesORM,
       User,
+      Dates,
     ]),
     UserModule,
   ],

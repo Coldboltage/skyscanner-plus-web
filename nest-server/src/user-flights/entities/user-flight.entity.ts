@@ -21,18 +21,6 @@ export class Flights {
   passengers?: number;
 }
 
-export class Dates {
-  departureDate: Date;
-  returnDate: Date;
-  departureDateString?: string;
-  returnDateString?: string;
-  minimalHoliday: number;
-  maximumHoliday: number;
-  requiredDayStart?: Date;
-  requiredDayEnd?: Date;
-  weekendOnly?: Date;
-}
-
 export class Cheapest {
   cost: number;
   costWithCurrency: string;
@@ -46,6 +34,30 @@ export class Best {
   time: string;
   arrival: string;
   durationOfFlight: string;
+}
+
+@Entity()
+export class Dates {
+  @PrimaryGeneratedColumn('uuid')
+  id?: string;
+  @Column()
+  departureDate: Date;
+  @Column()
+  returnDate: Date;
+  @Column({ nullable: true })
+  departureDateString?: string;
+  @Column({ nullable: true })
+  returnDateString?: string;
+  @Column()
+  minimalHoliday: number;
+  @Column()
+  maximumHoliday: number;
+  @Column({ nullable: true })
+  requiredDayStart?: Date;
+  @Column({ nullable: true })
+  requiredDayEnd?: Date;
+  @Column({ nullable: true })
+  weekendOnly?: Date;
 }
 
 @Entity()
@@ -66,8 +78,10 @@ export class UserFlightTypeORM {
   lastUpdated: number;
   @Column({ type: 'bigint', default: 0 })
   scannedLast: number;
-  @Column({ type: 'bigint', default: 0 })
-  nextScan: number;
+  @Column()
+  nextScan: Date;
+  @Column()
+  nextScanDate: Date;
   @Column({ nullable: true })
   screenshot?: string;
   @Column()
@@ -86,18 +100,9 @@ export class UserFlightTypeORM {
     returnFlight: boolean;
     passengers?: number;
   };
-  @Column('simple-json')
-  dates: {
-    departureDate: Date;
-    returnDate: Date;
-    departureDateString?: string;
-    returnDateString?: string;
-    minimalHoliday: number;
-    maximumHoliday: number;
-    requiredDayStart?: Date;
-    requiredDayEnd?: Date;
-    weekendOnly?: Date;
-  };
+  @OneToOne(() => Dates, { eager: true })
+  @JoinColumn()
+  dates: Dates;
   @OneToMany(() => ScanDateORM, (scanDate) => scanDate.userFlight, {
     eager: true,
   })
@@ -108,7 +113,7 @@ export class UserFlightTypeORM {
 export class ScanDateORM {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamp' })
   dateOfScanLoop: Date;
   @ManyToOne(() => UserFlightTypeORM)
   userFlight: UserFlightTypeORM;
