@@ -127,14 +127,14 @@ export class UserFlightsService {
     return `This action removes a #${id} userFlight`;
   }
 
-  sortCheapestFlights(mostRecentScan: ScanDate) {
+  sortCheapestFlights(mostRecentScan: ScanDateORM) {
     if (!mostRecentScan)
       return {
         cheapestFlightsOrderMax: [],
         bestFlightsOrderMax: [],
       };
-    const cheapestObject: ReturnDates[] = [];
-    const bestObject: ReturnDates[] = [];
+    const cheapestObject: ReturnDatesORM[] = [];
+    const bestObject: ReturnDatesORM[] = [];
     for (const departureDateArray of mostRecentScan.departureDate) {
       for (const returnDateArray of departureDateArray.returnDates) {
         if (returnDateArray.cheapest.cost > 0)
@@ -155,13 +155,20 @@ export class UserFlightsService {
     };
   }
 
-  async getMostRecentScannedFlights(id: string) {
-    const reference = await this.findOne(id);
-    // delete reference.scanDate;
-    const mostRecentScan = reference.scanDate.at(-1);
-    const sortedFlights = this.sortCheapestFlights(mostRecentScan);
-    return { latestFlights: sortedFlights, result: reference };
+  async getMostRecentScannedFlightsByRef(reference: string) {
+    const userFlight = await this.findFlightByRef(reference);
+    const sortedFlights = this.sortCheapestFlights(userFlight.scanDate[0]);
+    console.log(sortedFlights);
+    return { latestFlights: sortedFlights, result: userFlight };
   }
+
+  // async getMostRecentScannedFlights(id: string) {
+  //   const reference = await this.findOne(id);
+  //   // delete reference.scanDate;
+  //   const mostRecentScan = reference.scanDate.at(-1);
+  //   const sortedFlights = this.sortCheapestFlights(mostRecentScan);
+  //   return { latestFlights: sortedFlights, result: reference };
+  // }
 
   async fingerprintLast24Days(fingerPrintId: string) {
     const result = await this.userFlightModel
@@ -188,9 +195,15 @@ export class UserFlightsService {
       };
       user = await this.userService.create(createUserDto);
     }
+    // Create Dates
+    const dates = await this.DatesRepository.save({
+      ...payload.dates,
+    });
+
     // create flight as UserFlightTypeORM spec.
     const flight: UserFlightTypeORM = {
       ...payload,
+      dates,
       user,
       created: new Date(),
     };
@@ -225,7 +238,6 @@ export class UserFlightsService {
       user: userTest,
       scannedLast: 1674168122118,
       nextScan: new Date(1674518400000),
-      nextScanDate: new Date(1674518400000),
       status: 'created',
       currency: {
         fullCurrency: 'EUR - €',
@@ -313,7 +325,16 @@ export class UserFlightsService {
   }
 
   async findFlightByRef(ref: string) {
-    return await this.UserFlightTypeORMRepository.findOneBy({ ref });
+    return await this.UserFlightTypeORMRepository.findOne({
+      where: {
+        ref,
+      },
+      order: {
+        scanDate: {
+          dateOfScanLoop: 'DESC',
+        },
+      },
+    });
   }
 
   async findFlightsByUser(userId: string) {

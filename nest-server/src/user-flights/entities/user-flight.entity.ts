@@ -57,7 +57,7 @@ export class Dates {
   @Column({ nullable: true })
   requiredDayEnd?: Date;
   @Column({ nullable: true })
-  weekendOnly?: Date;
+  weekendOnly?: boolean;
 }
 
 @Entity()
@@ -80,8 +80,6 @@ export class UserFlightTypeORM {
   scannedLast: number;
   @Column()
   nextScan: Date;
-  @Column()
-  nextScanDate: Date;
   @Column({ nullable: true })
   screenshot?: string;
   @Column()
