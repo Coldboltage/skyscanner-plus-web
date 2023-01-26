@@ -157,7 +157,7 @@ export class UserFlightsService {
 
   async getMostRecentScannedFlights(id: string) {
     const reference = await this.findOne(id);
-    delete reference.scanDate;
+    // delete reference.scanDate;
     const mostRecentScan = reference.scanDate.at(-1);
     const sortedFlights = this.sortCheapestFlights(mostRecentScan);
     return { latestFlights: sortedFlights, result: reference };
