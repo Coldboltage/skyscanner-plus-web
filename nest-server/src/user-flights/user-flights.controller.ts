@@ -41,10 +41,10 @@ export class UserFlightsController {
   //   return this.userFlightsService.findOne(id);
   // }
 
-  @Get(':id/flight')
-  findOne(@Param('id') id: string) {
-    return this.userFlightsService.getMostRecentScannedFlights(id);
-  }
+  // @Get(':id/flight')
+  // findOne(@Param('id') id: string) {
+  //   return this.userFlightsService.getMostRecentScannedFlights(id);
+  // }
 
   @Get(':fpId/fingerPrint')
   fingerprintLast24Days(@Param('id') id: string) {
@@ -101,6 +101,11 @@ export class UserFlightsController {
   @Get(':email/getByEmail')
   findFlightsByEmail(@Param('email') email: string) {
     return this.userFlightsService.findFlightsByEmail(email);
+  }
+
+  @Get(':ref/mostRecentFlightByRef')
+  findOneByRef(@Param('ref') ref: string) {
+    return this.userFlightsService.getMostRecentScannedFlightsByRef(ref);
   }
 
   // Testing
