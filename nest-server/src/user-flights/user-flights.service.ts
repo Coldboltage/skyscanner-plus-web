@@ -239,6 +239,7 @@ export class UserFlightsService {
       scannedLast: 1674168122118,
       nextScan: new Date(1674518400000),
       status: 'created',
+      alertPriceFired: false,
       currency: {
         fullCurrency: 'EUR - €',
         currencyCode: 'EUR',
