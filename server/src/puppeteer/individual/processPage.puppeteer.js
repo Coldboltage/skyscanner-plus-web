@@ -1,5 +1,5 @@
 const cheerio = require("cheerio");
-const dayjs = require('dayjs')
+const dayjs = require("dayjs");
 
 const processPage = async (page, returnDateInMili, departureDateIteration) => {
   console.log("refreshing page");
@@ -16,15 +16,14 @@ const processPage = async (page, returnDateInMili, departureDateIteration) => {
     console.log("Page loaded without error");
   }
 
-  // await page.screenshot({path: "./screenshot.jpg"})
-  await page.waitForSelector(
-    "#app-root > div.FlightsDayView_row__NjQyZ > div > div.FlightsDayView_container__ZjgwY > div.FlightsDayView_results__YjlmM > div:nth-child(1) > div.ResultsSummary_container__ZWE4O > div.ResultsSummary_innerContainer__ZjFhZ > div.ResultsSummary_summaryContainer__NmI1Y > span",
-    { timeout: 300000 }
-  );
+  const acceptButton = "button.BpkButtonBase_bpk-button__NThiZ";
 
-  if (($("#acceptCookieButton").html() === "OK") === true) {
+  // await page.screenshot({path: "./screenshot.jpg"})
+  await page.waitForSelector(acceptButton, { timeout: 300000 });
+
+  if (($(acceptButton).html() === "OK") === true) {
     console.log("Locating cookie button");
-    await page.click("#acceptCookieButton");
+    await page.click(acceptButton);
   }
 
   await page.waitForTimeout(200);
@@ -52,7 +51,8 @@ const processPage = async (page, returnDateInMili, departureDateIteration) => {
     "#app-root > div.FlightsDayView_row__NjQyZ > div > div.FlightsDayView_container__ZjgwY > div.FlightsDayView_results__YjlmM > div:nth-child(1) > div.FlightsResults_dayViewItems__ZDFlO > div:nth-child(1) > div > div > a > div > div.BpkTicket_bpk-ticket__paper__N2IwN.BpkTicket_bpk-ticket__main__NmI5Z.BpkTicket_bpk-ticket__main--padded__YTMwZ.BpkTicket_bpk-ticket__main--horizontal__ZTY5N.BpkTicket_bpk-ticket__paper--with-notches__NDVkM > div > div.UpperTicketBody_container__NDcwM > div.UpperTicketBody_legsContainer__ZjcyZ > div:nth-child(1) > div.LegInfo_legInfo__ZGMzY > div.LegInfo_routePartialDepart__NzEwY > span.BpkText_bpk-text__YWQwM.BpkText_bpk-text--lg__ODFjM.LegInfo_routePartialTime__OTFkN > div > span";
   const cheapestDepartureArrivalTimeText =
     "#app-root > div.FlightsDayView_row__NjQyZ > div > div.FlightsDayView_container__ZjgwY > div.FlightsDayView_results__YjlmM > div:nth-child(1) > div.FlightsResults_dayViewItems__ZDFlO > div:nth-child(1) > div > div > a > div > div.BpkTicket_bpk-ticket__paper__N2IwN.BpkTicket_bpk-ticket__main__NmI5Z.BpkTicket_bpk-ticket__main--padded__YTMwZ.BpkTicket_bpk-ticket__main--horizontal__ZTY5N.BpkTicket_bpk-ticket__paper--with-notches__NDVkM > div > div.UpperTicketBody_container__NDcwM > div.UpperTicketBody_legsContainer__ZjcyZ > div:nth-child(1) > div.LegInfo_legInfo__ZGMzY > div.LegInfo_routePartialArrive__Y2U1N > span.BpkText_bpk-text__YWQwM.BpkText_bpk-text--lg__ODFjM.LegInfo_routePartialTime__OTFkN > div > span.BpkText_bpk-text__YWQwM.BpkText_bpk-text--subheading__ODU3O";
-  const durationFlight = "#app-root > div.FlightsDayView_row__NjQyZ > div > div.FlightsDayView_container__ZjgwY > div.FlightsDayView_results__YjlmM > div:nth-child(1) > div.FlightsResults_dayViewItems__ZDFlO > div:nth-child(1) > div > div.FlightsTicket_container__NWJkY > a > div > div.BpkTicket_bpk-ticket__paper__N2IwN.BpkTicket_bpk-ticket__main__NmI5Z.BpkTicket_bpk-ticket__main--padded__YTMwZ.BpkTicket_bpk-ticket__main--horizontal__ZTY5N.BpkTicket_bpk-ticket__paper--with-notches__NDVkM > div > div.UpperTicketBody_container__NDcwM > div.UpperTicketBody_legsContainer__ZjcyZ > div:nth-child(1) > div.LegInfo_legInfo__ZGMzY > div.LegInfo_stopsContainer__NWIyN > span"
+  const durationFlight =
+    "#app-root > div.FlightsDayView_row__NjQyZ > div > div.FlightsDayView_container__ZjgwY > div.FlightsDayView_results__YjlmM > div:nth-child(1) > div.FlightsResults_dayViewItems__ZDFlO > div:nth-child(1) > div > div.FlightsTicket_container__NWJkY > a > div > div.BpkTicket_bpk-ticket__paper__N2IwN.BpkTicket_bpk-ticket__main__NmI5Z.BpkTicket_bpk-ticket__main--padded__YTMwZ.BpkTicket_bpk-ticket__main--horizontal__ZTY5N.BpkTicket_bpk-ticket__paper--with-notches__NDVkM > div > div.UpperTicketBody_container__NDcwM > div.UpperTicketBody_legsContainer__ZjcyZ > div:nth-child(1) > div.LegInfo_legInfo__ZGMzY > div.LegInfo_stopsContainer__NWIyN > span";
   // Best
   const bestButton =
     "#app-root > div.FlightsDayView_row__NjQyZ > div > div.FlightsDayView_container__ZjgwY > div.FlightsDayView_results__YjlmM > div:nth-child(1) > div.FqsTabs_fqsTabsWithSparkle__ZDAyO > button:nth-child(1)";
@@ -79,7 +79,9 @@ const processPage = async (page, returnDateInMili, departureDateIteration) => {
   const cheapestCost = $(cheapestCostText).text().substring(1).replace(",", "");
 
   const cheapestDepartureDepartTime = $(cheapestDepartureDepartTimeText).text();
-  const cheapestDepartureArrivalTime = $(cheapestDepartureArrivalTimeText).text();
+  const cheapestDepartureArrivalTime = $(
+    cheapestDepartureArrivalTimeText
+  ).text();
   const cheapestDepartureDurationFlight = $(durationFlight).text();
   // Best
   await page.waitForTimeout(1500);
@@ -109,12 +111,16 @@ const processPage = async (page, returnDateInMili, departureDateIteration) => {
   console.log("Done");
   // await page.close();
 
-  const departDate = dayjs(new Date(departureDateIteration.date)).format("dddd DD MMMM YYYY")
-  const returnDate = dayjs(new Date(returnDateInMili)).format("dddd DD MMMM YYYY")
+  const departDate = dayjs(new Date(departureDateIteration.date)).format(
+    "dddd DD MMMM YYYY"
+  );
+  const returnDate = dayjs(new Date(returnDateInMili)).format(
+    "dddd DD MMMM YYYY"
+  );
   const flightDatesString = {
     departDate,
-    returnDate
-  }
+    returnDate,
+  };
 
   return {
     daysBetweenDepartureDateAndArrivalDate: Number(
@@ -129,13 +135,13 @@ const processPage = async (page, returnDateInMili, departureDateIteration) => {
       cost: +cheapestCost,
       time: cheapestDepartureDepartTime,
       arrival: cheapestDepartureArrivalTime,
-      durationOfFlight: cheapestDepartureDurationFlight
+      durationOfFlight: cheapestDepartureDurationFlight,
     },
     best: {
       cost: +bestCost,
       time: bestDepartureDepartTime,
       arrival: bestDepartureArrivalTime,
-      durationOfFlight: bestDepartureDurationFlight
+      durationOfFlight: bestDepartureDurationFlight,
     },
   };
 };

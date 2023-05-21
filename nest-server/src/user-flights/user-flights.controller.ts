@@ -21,20 +21,20 @@ export class UserFlightsController {
   //   return this.userFlightsService.create(createUserFlightDto);
   // }
 
-  @Post()
-  create(@Body() payload: UserFlight) {
-    return this.userFlightsService.create(payload);
-  }
+  // @Post()
+  // create(@Body() payload: UserFlight) {
+  //   return this.userFlightsService.create(payload);
+  // }
 
-  @Get()
-  findAll() {
-    return this.userFlightsService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.userFlightsService.findAll();
+  // }
 
-  @Get(':subId/sub')
-  findBySubId(@Param('subId') id: string) {
-    return this.userFlightsService.findBySubId(id);
-  }
+  // @Get(':subId/sub')
+  // findBySubId(@Param('subId') id: string) {
+  //   return this.userFlightsService.findBySubId(id);
+  // }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
@@ -46,18 +46,18 @@ export class UserFlightsController {
   //   return this.userFlightsService.getMostRecentScannedFlights(id);
   // }
 
-  @Get(':fpId/fingerPrint')
-  fingerprintLast24Days(@Param('id') id: string) {
-    return this.userFlightsService.fingerprintLast24Days(id);
-  }
+  // @Get(':fpId/fingerPrint')
+  // fingerprintLast24Days(@Param('id') id: string) {
+  //   return this.userFlightsService.fingerprintLast24Days(id);
+  // }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUserFlightDto: UpdateUserFlightDto,
-  ) {
-    return this.userFlightsService.update(+id, updateUserFlightDto);
-  }
+  // @Patch(':id')
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateUserFlightDto: UpdateUserFlightDto,
+  // ) {
+  //   return this.userFlightsService.update(+id, updateUserFlightDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
@@ -106,6 +106,10 @@ export class UserFlightsController {
   @Get(':ref/mostRecentFlightByRef')
   findOneByRef(@Param('ref') ref: string) {
     return this.userFlightsService.getMostRecentScannedFlightsByRef(ref);
+  }
+  @Delete('/delete/:id')
+  deleteOneById(@Param('id') id: string) {
+    return this.userFlightsService.deleteOneById(id);
   }
 
   // Testing

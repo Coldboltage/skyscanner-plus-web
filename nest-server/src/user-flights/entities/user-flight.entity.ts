@@ -8,6 +8,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
+import { Dates } from './date.entity';
 
 export class Currency {
   fullCurrency: string;
@@ -37,30 +38,6 @@ export class Best {
 }
 
 @Entity()
-export class Dates {
-  @PrimaryGeneratedColumn('uuid')
-  id?: string;
-  @Column()
-  departureDate: Date;
-  @Column()
-  returnDate: Date;
-  @Column({ nullable: true })
-  departureDateString?: string;
-  @Column({ nullable: true })
-  returnDateString?: string;
-  @Column()
-  minimalHoliday: number;
-  @Column()
-  maximumHoliday: number;
-  @Column({ nullable: true })
-  requiredDayStart?: Date;
-  @Column({ nullable: true })
-  requiredDayEnd?: Date;
-  @Column({ nullable: true })
-  weekendOnly?: boolean;
-}
-
-@Entity()
 export class UserFlightTypeORM {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
@@ -70,14 +47,14 @@ export class UserFlightTypeORM {
   user: User;
   @Column()
   ref: string;
-  @Column()
+  @Column({ nullable: false })
   isBeingScanned: boolean;
   @Column()
   workerPID: number;
-  @Column({ type: 'bigint', default: 0 })
-  lastUpdated: number;
-  @Column({ type: 'bigint', default: 0 })
-  scannedLast: number;
+  @Column({ nullable: true })
+  lastUpdated: Date;
+  @Column({ nullable: true })
+  scannedLast: Date;
   @Column()
   nextScan: Date;
   @Column({ nullable: true })
@@ -100,7 +77,9 @@ export class UserFlightTypeORM {
     returnFlight: boolean;
     passengers?: number;
   };
-  @OneToOne(() => Dates, { eager: true })
+  @OneToOne(() => Dates, {
+    eager: true,
+  })
   @JoinColumn()
   dates: Dates;
   @OneToMany(() => ScanDateORM, (scanDate) => scanDate.userFlight, {
@@ -134,9 +113,7 @@ export class DepartureDate {
   @OneToMany(
     () => ReturnDatesORM,
     (returnDates) => returnDates.departureDates,
-    {
-      eager: true,
-    },
+    { eager: true },
   )
   returnDates?: ReturnDatesORM[];
 }

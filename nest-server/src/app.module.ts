@@ -14,15 +14,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     UserFlightsModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: 'localhost', // local for development // host.docker.internal
       port: 5432,
       username: 'postgres',
       password: 'random1234',
-      database: 'postgres',
+      database: 'explorer',
       autoLoadEntities: true,
       synchronize: true,
     }),
-    MongooseModule.forRoot(process.env.MONGODB_CONNECTION),
+    // MongooseModule.forRoot(process.env.MONGODB_CONNECTION),
   ],
   controllers: [AppController],
   providers: [AppService],

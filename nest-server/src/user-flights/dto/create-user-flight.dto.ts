@@ -16,5 +16,5 @@ export class CreateUserFlightDto {
   ref: string;
   scannedLast: number;
   fingerPrintId: string;
-  sub: string
+  sub: string;
 }

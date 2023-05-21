@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
@@ -14,7 +14,6 @@ import {
   ScanDateORM,
   DepartureDate,
   ReturnDatesORM,
-  Dates,
 } from './entities/user-flight.entity';
 import {
   ReturnDates,
@@ -22,12 +21,13 @@ import {
   UserFlight,
   UserFlightDocument,
 } from './schema/userFlight.schema';
+import { Dates } from './entities/date.entity';
 
 @Injectable()
 export class UserFlightsService {
   constructor(
-    @InjectModel(UserFlight.name)
-    private userFlightModel: Model<UserFlightDocument>,
+    // @InjectModel(UserFlight.name)
+    // private userFlightModel: Model<UserFlightDocument>,
     @InjectRepository(UserFlightTypeORM)
     private UserFlightTypeORMRepository: Repository<UserFlightTypeORM>,
     @InjectRepository(ScanDateORM)
@@ -98,30 +98,30 @@ export class UserFlightsService {
   //   return 'This action adds a new userFlight';
   // }
 
-  async create(payload: UserFlight) {
-    // This is not becoming a date properly which is why this is happening.
-    payload.dates.departureDate = new Date(payload.dates.departureDate);
-    payload.dates.returnDate = new Date(payload.dates.returnDate);
-    const test = await this.userFlightModel.create(payload);
-    console.log(test);
-    return 'This action adds a new userFlight';
-  }
+  // async create(payload: UserFlight) {
+  //   // This is not becoming a date properly which is why this is happening.
+  //   payload.dates.departureDate = new Date(payload.dates.departureDate);
+  //   payload.dates.returnDate = new Date(payload.dates.returnDate);
+  //   const test = await this.userFlightModel.create(payload);
+  //   console.log(test);
+  //   return 'This action adds a new userFlight';
+  // }
 
-  async findAll() {
-    return await this.userFlightModel.find();
-  }
+  // async findAll() {
+  //   return await this.userFlightModel.find();
+  // }
 
-  async findOne(id: string) {
-    return await this.userFlightModel.findOne({ ref: id });
-  }
+  // async findOne(id: string) {
+  //   return await this.userFlightModel.findOne({ ref: id });
+  // }
 
-  async findBySubId(id: string) {
-    return await this.userFlightModel.find({ 'user.sub': id });
-  }
+  // async findBySubId(id: string) {
+  //   return await this.userFlightModel.find({ 'user.sub': id });
+  // }
 
-  update(id: number, updateUserFlightDto: UpdateUserFlightDto) {
-    return `This action updates a #${id} userFlight`;
-  }
+  // update(id: number, updateUserFlightDto: UpdateUserFlightDto) {
+  //   return `This action updates a #${id} userFlight`;
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} userFlight`;
@@ -164,23 +164,23 @@ export class UserFlightsService {
 
   // async getMostRecentScannedFlights(id: string) {
   //   const reference = await this.findOne(id);
-  //   // delete reference.scanDate;
+  //   //   reference.scanDate;
   //   const mostRecentScan = reference.scanDate.at(-1);
   //   const sortedFlights = this.sortCheapestFlights(mostRecentScan);
   //   return { latestFlights: sortedFlights, result: reference };
   // }
 
-  async fingerprintLast24Days(fingerPrintId: string) {
-    const result = await this.userFlightModel
-      .find({
-        $and: [
-          { 'user.fingerPrintId': fingerPrintId },
-          { created: { $gte: new Date().toISOString().split('T')[0] } },
-        ],
-      })
-      .lean();
-    return result.length;
-  }
+  // async fingerprintLast24Days(fingerPrintId: string) {
+  //   const result = await this.userFlightModel
+  //     .find({
+  //       $and: [
+  //         { 'user.fingerPrintId': fingerPrintId },
+  //         { created: { $gte: new Date().toISOString().split('T')[0] } },
+  //       ],
+  //     })
+  //     .lean();
+  //   return result.length;
+  // }
 
   // TypeORM
 
@@ -195,10 +195,18 @@ export class UserFlightsService {
       };
       user = await this.userService.create(createUserDto);
     }
+    console.log(payload.dates);
     // Create Dates
-    const dates = await this.DatesRepository.save({
-      ...payload.dates,
-    });
+    let dates;
+    try {
+      dates = await this.DatesRepository.save({
+        ...payload.dates,
+      });
+    } catch (error) {
+      this.logger.error('Date has an issue');
+      console.log(error);
+      throw new BadRequestException('Something went wrong with the date');
+    }
 
     // create flight as UserFlightTypeORM spec.
     const flight: UserFlightTypeORM = {
@@ -209,6 +217,7 @@ export class UserFlightsService {
     };
     // Save Flight with user connected
     this.logger.verbose('Finished creating flight');
+    console.log(flight);
     return await this.UserFlightTypeORMRepository.save(flight);
   }
 
@@ -225,6 +234,7 @@ export class UserFlightsService {
       returnDate: new Date('2023-02-17T00:00:00.000+00:00'),
       minimalHoliday: 3,
       maximumHoliday: 5,
+      userFlight: new UserFlightTypeORM(),
     };
     const datesTest = await this.DatesRepository.save(dates);
     // User
@@ -234,9 +244,9 @@ export class UserFlightsService {
       created: new Date(),
       isBeingScanned: false,
       workerPID: 0,
-      lastUpdated: 0,
+      lastUpdated: new Date(),
       user: userTest,
-      scannedLast: 1674168122118,
+      scannedLast: new Date(),
       nextScan: new Date(1674518400000),
       status: 'created',
       alertPriceFired: false,
@@ -350,5 +360,14 @@ export class UserFlightsService {
     const user = await this.userService.findByEmail(emailDto);
     console.log(user);
     return await this.UserFlightTypeORMRepository.findBy({ user });
+  }
+
+  async deleteOneById(id: string) {
+    console.log(id);
+    const flightEntity = await this.UserFlightTypeORMRepository.findOneBy({
+      id: id,
+    });
+    await this.DatesRepository.delete(flightEntity.dates.id);
+    return this.UserFlightTypeORMRepository.remove(flightEntity);
   }
 }
