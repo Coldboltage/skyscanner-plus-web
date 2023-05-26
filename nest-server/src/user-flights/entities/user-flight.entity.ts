@@ -55,6 +55,8 @@ export class UserFlightTypeORM {
   lastUpdated: Date;
   @Column({ nullable: true })
   scannedLast: Date;
+  @Column({ nullable: true })
+  cheapest?: number;
   @Column()
   nextScan: Date;
   @Column({ nullable: true })
