@@ -184,7 +184,10 @@ export class UserFlightsService {
 
   // TypeORM
 
-  async createFlight(userInformation: UserSaveMethod, payload) {
+  async createFlight(
+    userInformation: UserSaveMethod,
+    payload: UserFlightTypeORM,
+  ) {
     // Find User
     let user = await this.userService.checkForUser(userInformation);
     if (!user) {
@@ -197,7 +200,7 @@ export class UserFlightsService {
     }
     console.log(payload.dates);
     // Create Dates
-    let dates;
+    let dates: Dates;
     try {
       dates = await this.DatesRepository.save({
         ...payload.dates,
