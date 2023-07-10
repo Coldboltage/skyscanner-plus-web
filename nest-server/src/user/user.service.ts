@@ -14,6 +14,7 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
   private readonly logger = new Logger('User');
+
   async create(createUserDto: CreateUserDto) {
     this.logger.verbose('Creating User');
     if (
